@@ -12,6 +12,15 @@ const halfD = 1500;
 let cameraZStart = 1500;
 let cameraZEnd = 500;
 
+let cloudModel;
+let modelRotation;
+let fpsDiv;
+let showFPS = true;
+
+let fpsHistory = [];
+const fpsSampleSize = 100;
+
+
 class Star {
   constructor(seed) 
   {
@@ -74,14 +83,11 @@ class Star {
   
 }
 
-let cloudModel;
-let modelRotation;
-let fpsDiv;
-let showFPS = true;
-
 async function setup() 
 {
   createCanvas(windowWidth, windowHeight, WEBGL);
+
+  setCameraTarget();
 
   //set up the canvas and the measurements for the windows
   halfW = windowWidth / 2;
@@ -166,9 +172,6 @@ function windowResized()
   resizeCanvas(windowWidth, windowHeight);
 }
 
-let fpsHistory = [];
-const fpsSampleSize = 100;
-
 function updateFpsDisplay() 
 {
   fpsHistory.push(frameRate());
@@ -190,4 +193,23 @@ function keyPressed()
   {
     showFPS = !showFPS;
   }
+}
+
+function calcCameraDistance(targetWorldSize)
+{
+  let fovY = PI / 3;
+  let aspect = windowWidth / windowHeight;
+
+  let distV = (targetWorldSize / 2) / tan(fovY / 2);
+
+  let fovX = 2 * atan(tan(fovY / 2) * aspect);
+  let distH = (targetWorldSize / 2) / tan(fovX / 2);
+
+  return max(distV, distH);
+}
+
+function setCameraTarget()
+{
+  cameraZStart = calcCameraDistance(1800);
+  cameraZEnd = calcCameraDistance(700);
 }
