@@ -3,7 +3,7 @@ const num_Stars = 1500;
 const noise_Scale = 0.5;
 const time_scale = 0.01;
 const speed = 0.3;
-const angle_change_rate = 0.20;
+const angle_change_rate = 0.02;
 const angle_noise_speed = 0.06
 
 let halfW, halfH;
@@ -39,50 +39,36 @@ class Star {
   {
     let turnTheta = (noise(this.noiseOffSetTheta + t * angle_noise_speed) - 0.5) * angle_change_rate;
     let turnPhi = (noise(this.noiseOffsetPhi + t * angle_noise_speed) - 0.5) * angle_change_rate;
+    
     this.theta += turnTheta;
     this.phi += turnPhi;
 
-    this.theta += turnTheta;
-    this.phi += turnPhi;
-
-    let flowVX = sin(this.phi) * cos(this.theta) * speed * this.speedMultipler;
-    let flowVY = sin(this.phi) * sin(this.theta) * speed * this.speedMultipler;
-    let flowVZ = cos(this.phi) * speed * this.speedMultipler;
-
-    let vx = flowVX
-    let vy = flowVY 
-    let vz = flowVZ
+    let vx = sin(this.phi) * cos(this.theta) * speed * this.speedMultipler;
+    let vy = sin(this.phi) * sin(this.theta) * speed * this.speedMultipler;
+    let vz = cos(this.phi) * speed * this.speedMultipler;
 
     this.x += vx;
     this.y += vy;
     this.z += vz;
 
-    if (this.x < -halfW) { this.x = halfW; this.trail = []; }
-    if (this.x > halfW) { this.x = -halfW; this.trail = []; }
-    if (this.y < -halfH) { this.y = halfH; this.trail = []; }
-    if (this.y > halfH) { this.y = -halfH; this.trail = []; }
-    if (this.z < -halfD) { this.z = halfD; this.trail = []; }
-    if (this.z > halfD) { this.z = -halfD; this.trail = []; }
+    if (this.x < -halfW) { this.x = halfW; }
+    if (this.x > halfW) { this.x = -halfW; }
+    if (this.y < -halfH) { this.y = halfH; }
+    if (this.y > halfH) { this.y = -halfH; }
+    if (this.z < -halfD) { this.z = halfD; }
+    if (this.z > halfD) { this.z = -halfD; }
 
 
-    this.brightness = map(noise(this.noiseOffsetTwinkle + t * time_scale), 0, 1, 60, 255);
   }
 
 
   display()
   {
     noStroke();
-
     push();
     translate(this.x, this.y, this.z);
-    fill(255, 255, 255, this.brightness);
-    sphere(this.baseSize / 2, 6, 6);
-
-    if(this.baseSize > 2.5)
-    {
-      fill(255, 255, 255, this.brightness * 0.15);
-      sphere(this.baseSize / 2, 6, 6);
-    }
+    fill(255, 255, 255, 255);
+    circle(0, 0, this.baseSize*1.5);
     pop();
   }
   
@@ -90,6 +76,8 @@ class Star {
 
 let cloudModel;
 let modelRotation;
+let fpsDiv;
+let showFPS = true;
 
 async function setup() 
 {
@@ -110,6 +98,19 @@ async function setup()
   //load in the model from blender
   cloudModel = await loadModel('MidasCloud.obj', true);
   cloudModel.computeNormals('smooth');
+
+  //DEBUG: set up div for displaying fps
+  fpsDiv = createDiv('');
+  fpsDiv.style('position', 'absolute');
+  fpsDiv.style('top', '10px');
+  fpsDiv.style('left', '10px');
+  fpsDiv.style('color', '#0f0');
+  fpsDiv.style('font-family', 'monospace');
+  fpsDiv.style('font-size', '16px');
+  fpsDiv.style('background', 'rgba(0,0,0,0.5)');
+  fpsDiv.style('padding', '6px 10px');
+  fpsDiv.style('z-index', '10');
+  fpsDiv.style('pointer-events', 'none');
 }
 
 function draw() 
@@ -154,15 +155,39 @@ function draw()
 
 
   //DEBUG: draw the frame 
-  let fps = frameRate();
-  textSize(32);
-  text(fps.toFixed(1), 50, 100);
+  if(showFPS)
+  {
+    updateFpsDisplay();
+  }
 }
-
 
 function windowResized() 
 {
   resizeCanvas(windowWidth, windowHeight);
+}
 
+let fpsHistory = [];
+const fpsSampleSize = 100;
 
+function updateFpsDisplay() 
+{
+  fpsHistory.push(frameRate());
+  if (fpsHistory.length > fpsSampleSize) fpsHistory.shift();
+
+  const avg = fpsHistory.reduce((a, b) => a + b, 0) / fpsHistory.length;
+  const min = Math.min(...fpsHistory);
+
+  fpsDiv.html(
+    `FPS: ${avg.toFixed(1)} (min ${min.toFixed(0)})<br>` +
+    `Stars: ${num_Stars}<br>` +
+    `DPR: ${window.devicePixelRatio}`
+  );
+}
+
+function keyPressed()
+{
+  if(key === 'f' || key === 'F')
+  {
+    showFPS = !showFPS;
+  }
 }
