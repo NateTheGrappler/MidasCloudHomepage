@@ -20,6 +20,24 @@ let showFPS = true;
 let fpsHistory = [];
 const fpsSampleSize = 100;
 
+//------------panel related information-------------//
+let drawPanels = false;
+let informationPanels = []; //stores actual panels
+let informationPanelBools = [] //bools for if a panel is flipped
+
+//define the panels as points floating around the cloud
+let panelAnchors = [
+  { x: 500, y: -150, z: 200 },
+  { x: -400, y: 250, z: -150 },
+  { x: 100, y: 400, z: 300 },
+]
+
+let informationPanelData = [
+  {title: 'Obsidian Vault(s)', detail: "Stores your notes"},
+  {title: 'Obsidian Vault(s)', detail: "Stores your notes"},
+  {title: 'Obsidian Vault(s)', detail: "Stores your notes"},
+] //TODO: populate with the things needed for each panel, nextcloud, obsidian server, plex server, all such items
+
 
 class Star {
   constructor(seed) 
@@ -117,6 +135,9 @@ async function setup()
   fpsDiv.style('padding', '6px 10px');
   fpsDiv.style('z-index', '10');
   fpsDiv.style('pointer-events', 'none');
+
+  //set up the information needed for panels clickable panels
+  createInformationPanels();
 }
 
 function draw() 
@@ -147,7 +168,10 @@ function draw()
   if(cameraZStart > cameraZEnd)
   {
     cameraZStart -= 15;
-  
+  }
+  else
+  {
+    drawPanels = true;
   }
   camera(0, 0, cameraZStart, 0, 0, 0, 0, 1, 0);
 
@@ -159,6 +183,11 @@ function draw()
     star.display();
   }
 
+  //check to see if animation is done, then draw in the panels
+  if(drawPanels)
+  {
+    drawInformationPanels();
+  }
 
   //DEBUG: draw the frame 
   if(showFPS)
@@ -212,4 +241,102 @@ function setCameraTarget()
 {
   cameraZStart = calcCameraDistance(1800);
   cameraZEnd = calcCameraDistance(700);
+}
+
+
+//the extra stuff needed for the rotating panels around the actual cloud
+
+function createInformationPanels()
+{
+  const overlay = createDiv('')
+  .id('panel-overlay')
+  .style('position', 'absolute')
+  .style('top', '0').style('left', '0')
+  .style('width', '100%').style('height', '100%')
+  .style('pointer-events', 'none')
+  .style('overflow', 'hidden')
+
+  informationPanelData.forEach((data, i) =>
+  {
+    const actualPanel = createDiv('')
+      .parent(overlay)
+      .style('position', 'absolute')
+      .style('width', '180px')
+      .style('padding', '14px')
+      .style('box-sizing', 'border-box')
+      .style('border', '1px solid #3a3f5c')
+      .style('background', 'rgba(11,12,27,0.78)')
+      .style('color', '#e8e8f0')
+      .style('font-family', 'monospace')
+      .style('border-radius', '6px')
+      .style('pointer-events', 'auto')
+      .style('cursor', 'pointer')
+      .style('opacity', '0')
+      .style('will-change', 'transform, opacity')
+      .style('transition', 'opacity 0.4s');
+
+      //store panel info
+      informationPanels.push(actualPanel);
+      informationPanelBools.push(false);
+  });
+
+
+}
+
+function getScreenPos(x, y, z) {
+  const renderer = _renderer;
+  const mv = renderer.uMVMatrix.mat4; // model-view matrix (column-major)
+  const pm = renderer.uPMatrix.mat4;  // projection matrix
+
+  // transform point by model-view matrix
+  const vx = mv[0]*x + mv[4]*y + mv[8]*z  + mv[12];
+  const vy = mv[1]*x + mv[5]*y + mv[9]*z  + mv[13];
+  const vz = mv[2]*x + mv[6]*y + mv[10]*z + mv[14];
+  const vw = mv[3]*x + mv[7]*y + mv[11]*z + mv[15];
+
+  // transform by projection matrix
+  const px = pm[0]*vx + pm[4]*vy + pm[8]*vz  + pm[12]*vw;
+  const py = pm[1]*vx + pm[5]*vy + pm[9]*vz  + pm[13]*vw;
+  const pz = pm[2]*vx + pm[6]*vy + pm[10]*vz + pm[14]*vw;
+  const pw = pm[3]*vx + pm[7]*vy + pm[11]*vz + pm[15]*vw;
+
+  // perspective divide -> normalized device coords
+  const ndcX = px / pw;
+  const ndcY = py / pw;
+  const ndcZ = pz / pw;
+
+  // convert to pixel coords
+  return {
+    x: (ndcX * 0.5 + 0.5) * width,
+    y: (1 - (ndcY * 0.5 + 0.5)) * height,
+    z: ndcZ, // useful for visibility/culling: roughly -1 (near) to 1 (far)
+    w: pw    // w <= 0 means the point is behind the camera
+  };
+}
+
+
+function drawInformationPanels()
+{
+  if(!drawPanels) return;
+
+  console.log("Drawing your panels")
+  console.log(informationPanels);
+  console.log(panelAnchors);
+
+  const canvasElement = document.querySelector('canvas');
+  const rect = canvasElement.getBoundingClientRect();
+
+  push();
+  rotateY(modelRotation);
+  for (let i = 0; i < informationPanels.length; i++) {
+    const p = panelAnchors[i];
+    const screenPos = getScreenPos(p.x, p.y, p.z);
+    const panel = informationPanels[i];
+
+    const visible = screenPos.w > 0; // in front of camera
+    panel.style('left', `${rect.left + screenPos.x - 90}px`);
+    panel.style('top', `${rect.top + screenPos.y}px`);
+    panel.style('opacity', visible ? '1' : '0');
+  }
+  pop();
 }
