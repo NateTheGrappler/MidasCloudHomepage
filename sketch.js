@@ -25,18 +25,24 @@ let drawPanels = false;
 let informationPanels = []; //stores actual panels
 let informationPanelBools = [] //bools for if a panel is flipped
 
-//define the panels as points floating around the cloud
-let panelAnchors = [
-  { x: 500, y: -150, z: 200 },
-  { x: -400, y: 250, z: -150 },
-  { x: 100, y: 400, z: 300 },
-]
+//settings for how the panels are rotated around the cloud
+const panelRingSettings = {
+  radiusRatio: 0.42,
+  minRadius: 200,
+  maxRadius: 250,
+  bobAmount: 8,
+  bobSpeed: 0.01
+};
 
 let informationPanelData = [
-  {title: 'Obsidian Vault(s)', detail: "Stores your notes"},
-  {title: 'Obsidian Vault(s)', detail: "Stores your notes"},
-  {title: 'Obsidian Vault(s)', detail: "Stores your notes"},
-] //TODO: populate with the things needed for each panel, nextcloud, obsidian server, plex server, all such items
+  { title: 'Obsidian Vault(s)', detail: "Stores your notes" },
+  { title: 'Nextcloud', detail: "Stores your files" },
+  { title: 'Plex Server', detail: "Streams your media" },
+  { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them" },
+  { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join" },
+  { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects" },
+
+] //TODO: swap in real content for each panel
 
 
 class Star {
@@ -104,12 +110,13 @@ class Star {
 async function setup() 
 {
   createCanvas(windowWidth, windowHeight, WEBGL);
-
+  addScreenPositionFunction();
   setCameraTarget();
 
   //set up the canvas and the measurements for the windows
-  halfW = windowWidth / 2;
-  halfH = windowHeight / 2;
+  halfW = windowWidth;
+  halfH = windowHeight;
+
   noiseSeed(1);
   modelRotation = HALF_PI;
   
@@ -146,6 +153,7 @@ function draw()
   //draw the model and set the movement and background
   background("#0b0c1b");
   orbitControl(0, 0, 0.5);
+  //orbitControl();
   fill(0, 150, 255);
 
   ambientLight(150, 150, 150);
@@ -167,7 +175,7 @@ function draw()
   //do the camera zoom at the beginning
   if(cameraZStart > cameraZEnd)
   {
-    cameraZStart -= 15;
+    cameraZStart -= 30;
   }
   else
   {
@@ -248,7 +256,7 @@ function setCameraTarget()
 
 function createInformationPanels()
 {
-  const overlay = createDiv('')
+  const overlay = createDiv('Overlay')
   .id('panel-overlay')
   .style('position', 'absolute')
   .style('top', '0').style('left', '0')
@@ -258,10 +266,11 @@ function createInformationPanels()
 
   informationPanelData.forEach((data, i) =>
   {
-    const actualPanel = createDiv('')
+    const actualPanel = createDiv('InformationPanel')
       .parent(overlay)
       .style('position', 'absolute')
-      .style('width', '180px')
+      .style('width', '220px')
+      .style('height', '240px')
       .style('padding', '14px')
       .style('box-sizing', 'border-box')
       .style('border', '1px solid #3a3f5c')
@@ -273,7 +282,7 @@ function createInformationPanels()
       .style('cursor', 'pointer')
       .style('opacity', '0')
       .style('will-change', 'transform, opacity')
-      .style('transition', 'opacity 0.4s');
+      .style('transition', 'opacity 0.4s, left 0.2s ease-out, top 0.2s ease-out');
 
       //store panel info
       informationPanels.push(actualPanel);
@@ -283,60 +292,42 @@ function createInformationPanels()
 
 }
 
-function getScreenPos(x, y, z) {
-  const renderer = _renderer;
-  const mv = renderer.uMVMatrix.mat4; // model-view matrix (column-major)
-  const pm = renderer.uPMatrix.mat4;  // projection matrix
+//Computes a panel's target position purely in 2D screen space
+function getPanelRingPosition(i, total)
+{
+  const centerX = windowWidth / 2;
+  const centerY = windowHeight / 2;
 
-  // transform point by model-view matrix
-  const vx = mv[0]*x + mv[4]*y + mv[8]*z  + mv[12];
-  const vy = mv[1]*x + mv[5]*y + mv[9]*z  + mv[13];
-  const vz = mv[2]*x + mv[6]*y + mv[10]*z + mv[14];
-  const vw = mv[3]*x + mv[7]*y + mv[11]*z + mv[15];
+  const radius = constrain(
+    min(windowWidth, windowHeight) * panelRingSettings.radiusRatio,
+    panelRingSettings.minRadius,
+    panelRingSettings.maxRadius
+  );
 
-  // transform by projection matrix
-  const px = pm[0]*vx + pm[4]*vy + pm[8]*vz  + pm[12]*vw;
-  const py = pm[1]*vx + pm[5]*vy + pm[9]*vz  + pm[13]*vw;
-  const pz = pm[2]*vx + pm[6]*vy + pm[10]*vz + pm[14]*vw;
-  const pw = pm[3]*vx + pm[7]*vy + pm[11]*vz + pm[15]*vw;
+  const angle = -HALF_PI + (TWO_PI / total) * i; //start at top, go clockwise
+  const bob = sin(frameCount * panelRingSettings.bobSpeed + i * 1.7) * panelRingSettings.bobAmount;
 
-  // perspective divide -> normalized device coords
-  const ndcX = px / pw;
-  const ndcY = py / pw;
-  const ndcZ = pz / pw;
-
-  // convert to pixel coords
   return {
-    x: (ndcX * 0.5 + 0.5) * width,
-    y: (1 - (ndcY * 0.5 + 0.5)) * height,
-    z: ndcZ, // useful for visibility/culling: roughly -1 (near) to 1 (far)
-    w: pw    // w <= 0 means the point is behind the camera
+    x: centerX + cos(angle) * radius,
+    y: centerY + sin(angle) * radius + bob
   };
 }
 
-
 function drawInformationPanels()
 {
-  if(!drawPanels) return;
+  const total = informationPanels.length;
 
-  console.log("Drawing your panels")
-  console.log(informationPanels);
-  console.log(panelAnchors);
-
-  const canvasElement = document.querySelector('canvas');
-  const rect = canvasElement.getBoundingClientRect();
-
-  push();
-  rotateY(modelRotation);
-  for (let i = 0; i < informationPanels.length; i++) {
-    const p = panelAnchors[i];
-    const screenPos = getScreenPos(p.x, p.y, p.z);
+  for(let i = 0; i < total; i++)
+  {
     const panel = informationPanels[i];
+    const data = informationPanelData[i];
 
-    const visible = screenPos.w > 0; // in front of camera
-    panel.style('left', `${rect.left + screenPos.x - 90}px`);
-    panel.style('top', `${rect.top + screenPos.y}px`);
-    panel.style('opacity', visible ? '1' : '0');
+    //fill in content once you have it
+    panel.html(`<strong>${data.title}</strong><br>${data.detail}`);
+
+    const target = getPanelRingPosition(i, total);
+    const rect = panel.elt.getBoundingClientRect();
+
+    //center the panel on its ring point using its actual rendered size
   }
-  pop();
 }
