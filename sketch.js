@@ -24,6 +24,8 @@ const fpsSampleSize = 100;
 let drawPanels = false;
 let informationPanels = []; //stores actual panels
 let informationPanelBools = [] //bools for if a panel is flipped
+let overlayDiv;
+let isListMode = false;
 
 //settings for how the panels are rotated around the cloud
 const panelRingSettings = {
@@ -37,7 +39,8 @@ const panelRingSettings = {
 
   bobAmount: 3,
   bobSpeed: 0.1,
-  margin: 12
+  margin: 12,
+  mobileBreakpoint: 620
 };
 
 let informationPanelData = [
@@ -309,6 +312,28 @@ function createPanelStyle()
       line-height: 1.4;
       color: #b8bcd6;
     }
+
+    /*if you can't render the circle without collision, make it a list instead*/
+    .list-mode {
+      pointer-events: auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 90px 16px 60px;
+    }
+ 
+    .list-mode .info-panel {
+      position: relative;
+      opacity: 1;
+      width: min(88vw, 340px);
+    }
+ 
+    .list-mode .info-panel:hover {
+      transform: none; /* no hover-scale in a scrolling touch list */
+    }
   `);
 
   styleTag.parent(document.head);
@@ -348,6 +373,27 @@ function createInformationPanels()
 
 }
 
+function setListMode(enable)
+{
+  isListMode = enable;
+
+  //if list mode, remove circle stuff and make list, else make back to circle
+  if(enable)
+  {
+    overlayDiv.addClass('list-mode');
+    for (const panel of informationPanels)
+    {
+      panel.elt.style.removeProperty('left');
+      panel.elt.style.removeProperty('top');
+      panel.elt.style.removeProperty('position');
+    }
+  }
+  else
+  {
+    overlayDiv.removeClass('list-mode');
+  }
+}
+
 //Computes a panel's target position purely in 2D screen space
 function getPanelRingPosition(i, total, panelWidth, panelHeight)
 {
@@ -380,6 +426,23 @@ function drawInformationPanels()
 {
   const total = informationPanels.length;
   const margin = panelRingSettings.margin;
+
+  //check to see if listMode should be used
+  const shouldUseListMode = windowWidth < panelRingSettings.mobileBreakpoint
+  if(shouldUseListMode !== isListMode)
+  {
+    setListMode(shouldUseListMode);
+  }
+
+  if(isListMode)
+  {
+    for(const panel of informationPanels)
+    {
+      panel.style('opacity', '1');
+    }
+    return;
+  }
+
 
   for(let i = 0; i < total; i++)
   {
