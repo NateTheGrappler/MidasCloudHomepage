@@ -44,12 +44,12 @@ const panelRingSettings = {
 };
 
 let informationPanelData = [
-  { title: 'Obsidian Vault(s)', detail: "Stores your notes", image: 'images/ObsidianLogo.png' },
-  { title: 'Nextcloud', detail: "Stores your files", image: 'images/nextCloud.png'},
-  { title: 'Plex Server', detail: "Streams your media", image: 'images/plex.png' },
-  { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them", image: 'images/bookstack.png' },
-  { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join", image: 'images/Minecraft_logo.svg' },
-  { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects", image: 'images/github.jpeg' },
+  { title: 'Obsidian Vault(s)', detail: "Stores your notes", image: 'images/ObsidianLogo.png', link: null},
+  { title: 'Nextcloud', detail: "Stores your files", image: 'images/nextCloud.png', link: 'https://files.midascloud.net'},
+  { title: 'Plex Server', detail: "Streams your media", image: 'images/plex.png', link: 'https://plex.midascloud.net' },
+  { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them", image: 'images/bookstack.png', link: null },
+  { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join", image: 'images/Minecraft_logo.svg', link: null },
+  { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects", image: 'images/github.jpeg', link: 'https://github.com/NateTheGrappler?tab=repositories' },
 
 ] //TODO: swap in real content for each panel
 
@@ -286,7 +286,7 @@ function createPanelStyle()
     }
  
     .info-panel:hover {
-      border: 4px solid, #B67B00;
+      border: 4px solid #B67B00;
       transform: scale(1.04);
     }
  
@@ -359,6 +359,8 @@ function createInformationPanels()
       .style('will-change', 'transform, opacity')
       .style('pointer-events', 'auto');
 
+        if (data.link) { actualPanel.mousePressed(() => { window.location.href = data.link; });}
+
       //build the inner content for the panel, including the images and stuff
       const imageHTML = data.image
         ? `<img src="${data.image}" alt="${data.title}">`
@@ -370,6 +372,7 @@ function createInformationPanels()
       informationPanelBools.push(false);
   });
 
+  overlayDiv = overlay;
 
 }
 
