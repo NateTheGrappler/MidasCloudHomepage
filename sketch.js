@@ -15,7 +15,7 @@ let cameraZEnd = 500;
 let cloudModel;
 let modelRotation;
 let fpsDiv;
-let showFPS = true;
+let showFPS = false;
 
 let fpsHistory = [];
 const fpsSampleSize = 100;
@@ -31,7 +31,8 @@ const panelRingSettings = {
   minRadius: 220,
   maxRadius: 290,
   bobAmount: 3,
-  bobSpeed: 0.1
+  bobSpeed: 0.1,
+  margin: 12
 };
 
 let informationPanelData = [
@@ -259,8 +260,8 @@ function createPanelStyle()
 {
   const styleTag = createElement('style', `
     .info-panel {
-      width: clamp(160px, 15vw, 240px);
-      min-height: clamp(160px, 20vh, 240px);
+      width: clamp(130px, 34vmin, 240px);
+      min-height: clamp(120px, 30vmin, 240px);
       height: auto;
  
       padding: 14px;
@@ -343,16 +344,25 @@ function createInformationPanels()
 }
 
 //Computes a panel's target position purely in 2D screen space
-function getPanelRingPosition(i, total)
+function getPanelRingPosition(i, total, panelWidth, panelHeight)
 {
   const centerX = windowWidth / 2;
   const centerY = windowHeight / 2;
+  const margin = panelRingSettings.margin;
 
-  const radius = constrain(
+  //calculate the max radius
+  const maxRadiusX = (windowWidth - panelWidth) / 2 - margin;
+  const maxRadiusY = (windowHeight - panelHeight) / 2 - margin;
+  const availableRadius = max(0, min(maxRadiusX, maxRadiusY));
+
+  let radius = constrain(
     min(windowWidth, windowHeight) * panelRingSettings.radiusRatio,
     panelRingSettings.minRadius,
     panelRingSettings.maxRadius
   );
+
+  //choose the smaller of the two, eitheer the calculated one or the avaliable one for smaller screens like phones
+  radius = min(radius, availableRadius);
 
   const angle = -HALF_PI + (TWO_PI / total) * i; //start at top, go clockwise
   const bob = sin(frameCount * panelRingSettings.bobSpeed + i * 1.7) * panelRingSettings.bobAmount;
@@ -366,13 +376,21 @@ function getPanelRingPosition(i, total)
 function drawInformationPanels()
 {
   const total = informationPanels.length;
+  const margin = panelRingSettings.margin;
 
   for(let i = 0; i < total; i++)
   {
     const panel = informationPanels[i];
-    const target = getPanelRingPosition(i, total);
     const rect = panel.elt.getBoundingClientRect();
+    const target = getPanelRingPosition(i, total, rect.width, rect.height);
 
+    //calc the position of a panel
+    let left = target.x - rect.width / 2;
+    let top = target.y - rect.height / 2;
+
+    //safety for overlapping/clipping
+    left = constrain(left, margin, windowWidth - rect.width - margin);
+    top = constrain(top, margin, windowHeight - rect.height - margin);
 
     //center the panel on its ring point using its actual rendered size
     panel.position(target.x - rect.width / 2, target.y - rect.height / 2);
