@@ -281,8 +281,6 @@ function createPanelStyle()
       border-radius: 6px;
       cursor: pointer;
 
-      /* clip anything (image, hover-scale, etc.) to the rounded card
-         shape so nothing can visually spill past the border */
       overflow: hidden;
 
       display: flex;
@@ -297,7 +295,6 @@ function createPanelStyle()
       transform: scale(1.04);
     }
 
-    /* panels with no link aren't clickable yet - look visibly inert */
     .info-panel.not-clickable {
       cursor: default;
       opacity: 0.75;
@@ -308,9 +305,6 @@ function createPanelStyle()
       transform: none;
     }
 
-    /* fixed, centered frame for the image so logos of very different
-       shapes (square icons, wide banners, an svg, a photo) all get the
-       same treatment instead of stretching or spilling out */
     .info-panel .panel-image-wrap {
       width: 100%;
       aspect-ratio: 16 / 9;
@@ -346,22 +340,36 @@ function createPanelStyle()
       color: #b8bcd6;
     }
 
+    .panel-overlay {
+      pointer-events: none;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
     /*if you can't render the circle without collision, make it a list instead*/
-    .list-mode {
+    .panel-overlay.list-mode {
       pointer-events: auto;
       overflow-y: auto;
+      overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
       padding: 90px 16px 60px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .panel-overlay.list-mode::-webkit-scrollbar {
+      display: none;
     }
  
     .list-mode .info-panel {
       position: relative;
       opacity: 1;
       width: min(88vw, 340px);
+      flex-shrink: 0;
     }
  
     .list-mode .info-panel:hover {
@@ -374,13 +382,12 @@ function createPanelStyle()
 
 function createInformationPanels()
 {
-  const overlay = createDiv('Overlay')
+  const overlay = createDiv('')
   .id('panel-overlay')
+  .class('panel-overlay')
   .style('position', 'absolute')
   .style('top', '0').style('left', '0')
-  .style('width', '100%').style('height', '100%')
-  .style('pointer-events', 'none')
-  .style('overflow', 'hidden')
+  .style('width', '100%').style('height', '100dvh')
 
   informationPanelData.forEach((data, i) =>
   {
