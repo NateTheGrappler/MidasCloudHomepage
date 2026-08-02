@@ -27,9 +27,14 @@ let informationPanelBools = [] //bools for if a panel is flipped
 
 //settings for how the panels are rotated around the cloud
 const panelRingSettings = {
-  radiusRatio: 0.42,
-  minRadius: 220,
-  maxRadius: 290,
+  radiusRatioX: 0.46,
+  minRadiusX: 220,
+  maxRadiusX: 460,
+
+  radiusRatioY: 0.34,
+  minRadiusY: 180,
+  maxRadiusY: 290,
+
   bobAmount: 3,
   bobSpeed: 0.1,
   margin: 12
@@ -349,27 +354,25 @@ function getPanelRingPosition(i, total, panelWidth, panelHeight)
   const centerX = windowWidth / 2;
   const centerY = windowHeight / 2;
   const margin = panelRingSettings.margin;
+  const s = panelRingSettings;
 
-  //calculate the max radius
-  const maxRadiusX = (windowWidth - panelWidth) / 2 - margin;
-  const maxRadiusY = (windowHeight - panelHeight) / 2 - margin;
-  const availableRadius = max(0, min(maxRadiusX, maxRadiusY));
+  //calculate the max radius for now the x and y directions
+  const availableRadiusX = max(0, (windowWidth - panelWidth) / 2 - margin);
+  const availableRadiusY = max(0, (windowHeight - panelHeight) / 2 - margin);
 
-  let radius = constrain(
-    min(windowWidth, windowHeight) * panelRingSettings.radiusRatio,
-    panelRingSettings.minRadius,
-    panelRingSettings.maxRadius
-  );
+  let radiusX = constrain(windowWidth * s.radiusRatioX, s.minRadiusX, s.maxRadiusX);
+  let radiusY = constrain(windowHeight * s.radiusRatioY, s.minRadiusY, s.maxRadiusY);
+ 
+  radiusX = min(radiusX, availableRadiusX);
+  radiusY = min(radiusY, availableRadiusY);
 
-  //choose the smaller of the two, eitheer the calculated one or the avaliable one for smaller screens like phones
-  radius = min(radius, availableRadius);
-
+  //do the rotation and slight movement up and down too
   const angle = -HALF_PI + (TWO_PI / total) * i; //start at top, go clockwise
   const bob = sin(frameCount * panelRingSettings.bobSpeed + i * 1.7) * panelRingSettings.bobAmount;
 
   return {
-    x: centerX + cos(angle) * radius,
-    y: centerY + sin(angle) * radius + bob
+    x: centerX + cos(angle) * radiusX,
+    y: centerY + sin(angle) * radiusY + bob
   };
 }
 
