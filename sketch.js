@@ -280,6 +280,13 @@ function createPanelStyle()
       font-family: monospace;
       border-radius: 6px;
       cursor: pointer;
+
+      /* clip anything (image, hover-scale, etc.) to the rounded card
+         shape so nothing can visually spill past the border */
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
  
       transition: opacity 0.4s, left 0.2s ease-out, top 0.2s ease-out,
                   transform 0.2s ease-out, border-color 0.2s ease-out;
@@ -289,15 +296,41 @@ function createPanelStyle()
       border: 4px solid #B67B00;
       transform: scale(1.04);
     }
- 
-    .info-panel img {
-      display: block;
+
+    /* panels with no link aren't clickable yet - look visibly inert */
+    .info-panel.not-clickable {
+      cursor: default;
+      opacity: 0.75;
+    }
+
+    .info-panel.not-clickable:hover {
+      border: 1px solid #00398e63;
+      transform: none;
+    }
+
+    /* fixed, centered frame for the image so logos of very different
+       shapes (square icons, wide banners, an svg, a photo) all get the
+       same treatment instead of stretching or spilling out */
+    .info-panel .panel-image-wrap {
       width: 100%;
-      height: auto;
       aspect-ratio: 16 / 9;
-      object-fit: contain;
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 4px;
       margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+ 
+    .info-panel .panel-image-wrap img {
+      max-width: 72%;
+      max-height: 72%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
     }
  
     .info-panel h3 {
@@ -353,7 +386,7 @@ function createInformationPanels()
   {
     const actualPanel = createDiv('InformationPanel')
       .parent(overlay)
-      .class('info-panel')
+      .class(data.link ? 'info-panel' : 'info-panel not-clickable')
       .style('position', 'absolute')
       .style('opacity', '0')
       .style('will-change', 'transform, opacity')
@@ -363,7 +396,7 @@ function createInformationPanels()
 
       //build the inner content for the panel, including the images and stuff
       const imageHTML = data.image
-        ? `<img src="${data.image}" alt="${data.title}">`
+        ? `<div class="panel-image-wrap"><img src="${data.image}" alt="${data.title}"></div>`
         : '';
         actualPanel.html(`${imageHTML}<h3>${data.title}</h3><p>${data.detail}</p>`);
 
@@ -462,7 +495,7 @@ function drawInformationPanels()
     top = constrain(top, margin, windowHeight - rect.height - margin);
 
     //center the panel on its ring point using its actual rendered size
-    panel.position(target.x - rect.width / 2, target.y - rect.height / 2);
+    panel.position(left, top);
     panel.style('opacity', '1');
   }
 }
