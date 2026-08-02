@@ -28,19 +28,19 @@ let informationPanelBools = [] //bools for if a panel is flipped
 //settings for how the panels are rotated around the cloud
 const panelRingSettings = {
   radiusRatio: 0.42,
-  minRadius: 200,
-  maxRadius: 250,
-  bobAmount: 8,
-  bobSpeed: 0.01
+  minRadius: 220,
+  maxRadius: 290,
+  bobAmount: 3,
+  bobSpeed: 0.1
 };
 
 let informationPanelData = [
-  { title: 'Obsidian Vault(s)', detail: "Stores your notes" },
-  { title: 'Nextcloud', detail: "Stores your files" },
-  { title: 'Plex Server', detail: "Streams your media" },
-  { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them" },
-  { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join" },
-  { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects" },
+  { title: 'Obsidian Vault(s)', detail: "Stores your notes", image: 'images/ObsidianLogo.png' },
+  { title: 'Nextcloud', detail: "Stores your files", image: 'images/nextCloud.png'},
+  { title: 'Plex Server', detail: "Streams your media", image: 'images/plex.png' },
+  { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them", image: 'images/bookstack.png' },
+  { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join", image: 'images/Minecraft_logo.svg' },
+  { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects", image: 'images/github.jpeg' },
 
 ] //TODO: swap in real content for each panel
 
@@ -145,6 +145,7 @@ async function setup()
 
   //set up the information needed for panels clickable panels
   createInformationPanels();
+  createPanelStyle();
 }
 
 function draw() 
@@ -254,6 +255,59 @@ function setCameraTarget()
 
 //the extra stuff needed for the rotating panels around the actual cloud
 
+function createPanelStyle()
+{
+  const styleTag = createElement('style', `
+    .info-panel {
+      width: clamp(160px, 15vw, 240px);
+      min-height: clamp(160px, 20vh, 240px);
+      height: auto;
+ 
+      padding: 14px;
+      box-sizing: border-box;
+      border: 1px solid #00398e63;
+      background: #00193f63;
+      color: #e8e8f0;
+      font-family: monospace;
+      border-radius: 6px;
+      cursor: pointer;
+ 
+      transition: opacity 0.4s, left 0.2s ease-out, top 0.2s ease-out,
+                  transform 0.2s ease-out, border-color 0.2s ease-out;
+    }
+ 
+    .info-panel:hover {
+      border: 4px solid, #B67B00;
+      transform: scale(1.04);
+    }
+ 
+    .info-panel img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+ 
+    .info-panel h3 {
+      margin: 0 0 6px 0;
+      font-size: clamp(13px, 1.1vw, 16px);
+      color: #ffffff;
+    }
+ 
+    .info-panel p {
+      margin: 0;
+      font-size: clamp(11px, 0.9vw, 13px);
+      line-height: 1.4;
+      color: #b8bcd6;
+    }
+  `);
+
+  styleTag.parent(document.head);
+}
+
 function createInformationPanels()
 {
   const overlay = createDiv('Overlay')
@@ -268,21 +322,17 @@ function createInformationPanels()
   {
     const actualPanel = createDiv('InformationPanel')
       .parent(overlay)
+      .class('info-panel')
       .style('position', 'absolute')
-      .style('width', '220px')
-      .style('height', '240px')
-      .style('padding', '14px')
-      .style('box-sizing', 'border-box')
-      .style('border', '1px solid #3a3f5c')
-      .style('background', 'rgba(11,12,27,0.78)')
-      .style('color', '#e8e8f0')
-      .style('font-family', 'monospace')
-      .style('border-radius', '6px')
-      .style('pointer-events', 'auto')
-      .style('cursor', 'pointer')
       .style('opacity', '0')
       .style('will-change', 'transform, opacity')
-      .style('transition', 'opacity 0.4s, left 0.2s ease-out, top 0.2s ease-out');
+      .style('pointer-events', 'auto');
+
+      //build the inner content for the panel, including the images and stuff
+      const imageHTML = data.image
+        ? `<img src="${data.image}" alt="${data.title}">`
+        : '';
+        actualPanel.html(`${imageHTML}<h3>${data.title}</h3><p>${data.detail}</p>`);
 
       //store panel info
       informationPanels.push(actualPanel);
@@ -320,14 +370,12 @@ function drawInformationPanels()
   for(let i = 0; i < total; i++)
   {
     const panel = informationPanels[i];
-    const data = informationPanelData[i];
-
-    //fill in content once you have it
-    panel.html(`<strong>${data.title}</strong><br>${data.detail}`);
-
     const target = getPanelRingPosition(i, total);
     const rect = panel.elt.getBoundingClientRect();
 
+
     //center the panel on its ring point using its actual rendered size
+    panel.position(target.x - rect.width / 2, target.y - rect.height / 2);
+    panel.style('opacity', '1');
   }
 }
