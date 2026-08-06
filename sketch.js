@@ -50,6 +50,7 @@ let informationPanelData = [
   { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them", image: 'images/bookstack.png', link: null },
   { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join", image: 'images/Minecraft_logo.svg', link: null },
   { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects", image: 'images/github.jpeg', link: 'https://github.com/NateTheGrappler?tab=repositories' },
+  { title: 'Calibre Library', detail: "Store your books", image: 'images/bookReading.png', link: 'https://books.midascloud.net' }
 
 ] //TODO: swap in real content for each panel
 
