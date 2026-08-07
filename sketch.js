@@ -46,11 +46,11 @@ const panelRingSettings = {
 let informationPanelData = [
   { title: 'Obsidian Vault(s)', detail: "Stores your notes", image: 'images/ObsidianLogo.png', link: null},
   { title: 'Nextcloud', detail: "Stores your files", image: 'images/nextCloud.png', link: 'https://files.midascloud.net'},
-  { title: 'Plex Server', detail: "Streams your media", image: 'images/plex.png', link: 'https://plex.midascloud.net' },
+  { title: 'Jellyfin Server', detail: "Streams your media (For Friends and Family Only)", image: 'images/jellyfin.webp', link: 'https://jelly.midascloud.net' },
   { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them", image: 'images/bookstack.png', link: null },
   { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join", image: 'images/Minecraft_logo.svg', link: null },
   { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects", image: 'images/github.jpeg', link: 'https://github.com/NateTheGrappler?tab=repositories' },
-  { title: 'Calibre Library', detail: "Store your books", image: 'images/bookReading.png', link: 'https://books.midascloud.net' }
+  { title: 'Calibre Library', detail: "Store your books (For Friends and Family Only)", image: 'images/bookReading.png', link: 'https://books.midascloud.net' }
 
 ] //TODO: swap in real content for each panel
 
