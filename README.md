@@ -15,11 +15,11 @@ But its not just for friends or family, anyone is welcome!!
 
 The front door — a custom `p5.js` WEBGL scene: a 3 D gold cloud, made in blender, model, an orbiting star field made with basic random function and 3 D application of geometry. It renders randomly at each user refresh. And rotating info panels linking out to each service, showcasing an image, name, and small description of the service
 
-![[Pasted image 20260812133540.png]]
+![MidasCloudWebpage](/Images/MidasCloudWebpage)
 
 On narrower view-ports the panels re-flow to become a sort of clean list, originally I tried to keep the architecture of the above photo, however I found this resolution to be cleaner and more elegant after feedback from users on mobile who wanted a list-like view:
 
-![[Pasted image 20260812133549.png|369]]
+![MidasCloudMobile](/Images/MidasCloudMobile)
 
 ---
 
