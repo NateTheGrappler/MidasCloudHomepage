@@ -1,7 +1,3 @@
-
-2026-08-03 19:36
-Tags: [[Personal Projects]] [[Servers]] [[System Admin]] [[Guide]] [[Cloudflare]] [[The Cloud]] [[Homelab]] [[README]]
-
 # Midascloud — Self-Hosted Personal Cloud
 
 A personal cloud platform (files, notes sync, media, and a custom access portal) self-hosted on a Proxmox VM, reachable from the internet without any open inbound ports, using Cloudflare Tunnel. A home-lab project overview focused mostly on security and following proper DevOps and System Administration Principles, mostly a functional learning/portfolio project.
@@ -9,6 +5,7 @@ A personal cloud platform (files, notes sync, media, and a custom access portal)
 I built this project because I thought it would be useful to those in my family that would use it. It was generally tailored for a learning experience while in school that would teach me real infrastructure and deployment while also letting me tinker with security and probing as much as I would like. It let me host and organize a large portion of my media, like notes, videos, books, and photos. I was generally able to turn scrap material into something that helped me learn while providing a good service to those I care about.
 
 But its not just for friends or family, anyone is welcome!!
+Hosted at: [Here!](https://midascloud.net)
 
 ---
 ## Homepage
