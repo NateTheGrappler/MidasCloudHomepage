@@ -1,0 +1,73 @@
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 24px;
+}
+
+.stars {
+  background-size: 200% 200%;
+  animation: drift 60s linear infinite;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    max-width: 25vw;
+
+    background: #0e1d50;
+    border: 1px solid #786003;
+    border-radius: 14px;
+    padding: 40px 36px 32px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+}
+
+.titleBox{
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.titleBox h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    margin: 0;
+    color: white;
+  }
+
+.titleBox h1 span {
+    color: #D59D21;
+}
+
+.underline {
+    height: 1px;
+    width: 0;
+    margin: 14px auto 28px;
+    background: linear-gradient(90deg, transparent, #D59D21, transparent);
+    animation: draw 1.1s ease-out 0.2s forwards;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.field label{
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #D59D21;
+    margin-bottom: 7px;
+}
+
+
+
+
+
