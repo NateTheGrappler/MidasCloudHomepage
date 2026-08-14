@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './LoginPage.css';
 
 function LoginPage()
@@ -7,21 +7,91 @@ function LoginPage()
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
-    return (
-        <div className = "login-page">
+    //star array for background star constellation
+    const [stars] = useState(() =>
+    Array.from({ length: 250 }, (_, i) => ({
+        id: i,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 4 + 1,
+        delay: Math.random() * 4,
+    }))
+    );
+
+    //program state for rendering the revealing text
+    const fullText = "Sync Your Notes using Obsidian";
+    const [displayedText, setDisplayedText] = useState('');
+    const [isTyping, setIsTyping] = useState(true)
+
+    //use effect state that does the actual animation
+    useEffect(() =>{
+        let index = 0; //where in text u are
+
+        const interval = setInterval(() => {
+            setDisplayedText(fullText.slice(0, index+1)); //update the visual using react state and increment location
+            index++;
             
+            //reset and draw the next letter every 80 ms until you reach full text length
+            if(index === fullText.length)
+            {
+                clearInterval(interval);
+                setIsTyping(false);
+            }
+            }, 80) //a part of the set interval function up there
+         
+
+            return () => clearInterval(interval); //clean up so no memory leak occurs (screw you react)
+        }, []); //[] because it's what react uses to only run this on start up apparently
+
+
+
+
+    //---------------------------------------------------------main html structure of the website---------------------------------------------------------
+    return (
+        
+        <div className = "login-page">
+
+            <div className = "welcomeText">
+                {displayedText}
+                {isTyping && <span className='cursor'>|</span>}
+            </div>
+
+            {/* update the random star field  */}
+            <div className = "stars">
+                {stars.map((star) => (
+                    <div
+                        key = {star.id}
+                        className="star"
+                            style={{
+                            top: `${star.top}%`,
+                            left: `${star.left}%`,
+                            width: `${star.size}px`,
+                            height: `${star.size}px`,
+                            animationDelay: `${star.delay}s`,
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* ------------------------------------------------------------------------------- */}
+
             <div className = "card">
 
                 {/* The main like title of the card */}
                 <div className="titleBox">
-                    <h1>Midas<span>Cloud</span></h1>
+                    <a href = "https://midascloud.net/">
+                        <h1>Midas<span>Cloud</span></h1>
+                    </a>
                 </div>
 
                 {/* The underline and main prompt for good looks*/}
                 <div className="underline"></div>
                 <p className ="tagline">Sign into your vault</p>
                 
+
+                {/* ----------------------------------------------------------------------------------------- */}
                 {/* This is the thing holding both input fields, its a form with the embedded items for input*/}
                 <form>
 
@@ -39,21 +109,36 @@ function LoginPage()
 
                     {/*The password part of log in*/}
                     <div className='field'>
-                        <label htmlFor="username">Password: </label>
-                        <input
-                        type="password"
-                        id="password"
-                        placeholder='**********'
-                        autoComplete='current-password'>
+                        <label htmlFor="password">Password: </label>
+                        <div className = "password-wrapper">
+                            {/*Actual Input field for entering password*/}
+                            <input
+                            type= {showPassword ? 'text' : 'password'}
+                            id="password"
+                            placeholder='**********'
+                            autoComplete='current-password'
+                            value = {password}
+                            onChange={(e) => setPassword(e.target.value)}>
 
-                        </input>
+                            </input>
+
+                            {/*Password visibilty button*/}
+                            <button type="button" className="showPasswordButton" onClick={ () => setShowPassword(!showPassword)}>
+                                {showPassword ? 'Hide' : 'Show'}
+                            </button>
+
+                        </div>
                     </div>
 
-                    <button type="submit" classNam = "submitButton"> Submit</button>
-                    <br></br>
-                    <button type="button" classNam = "registerButton"> Register</button>
 
+                    {/* ----------------------------------------------------------------------------------------- */}
+                    <button type="submit" className = "submitButton"> Submit</button>
                 </form>
+
+                <div className = "registerDiv">
+                    <label htmlFor="register">Want Access...?</label>
+                    <a href="https://portal.midascloud.net/register" className="registerLink"> Request to Register </a>
+                </div>
 
 
             </div>

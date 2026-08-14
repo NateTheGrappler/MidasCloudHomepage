@@ -2,6 +2,7 @@
     position: relative;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
@@ -9,31 +10,61 @@
 }
 
 .stars {
-  background-size: 200% 200%;
-  animation: drift 60s linear infinite;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: drift 40s linear infinite;
+}
+
+.welcomeText {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  color: #EDEAE0;
+  letter-spacing: 0.02em;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.cursor {
+    display: inline-block;
+    margin-left: 2px;
+    color: #D59D21;
+    animation: blink 1s step-end infinite;
 }
 
 .card {
     position: relative;
     width: 100%;
-    max-width: 25vw;
-
-    background: #0e1d50;
-    border: 1px solid #786003;
+    max-width: 400px;
+    background: #00193f63;
+    border: 1px solid #00398e63;
     border-radius: 14px;
     padding: 40px 36px 32px;
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+    box-shadow: 0 60px 100px -20px #b67c0064;
+}
+
+.card a {
+    text-decoration: none;
+    color: inherit;
 }
 
 .titleBox{
     text-align: center;
     margin-bottom: 6px;
+    cursor: pointer;
 }
 
 .titleBox h1 {
     font-family: 'Fraunces', serif;
     font-weight: 500;
-    font-size: 28px;
+    font-size: 42px;
     letter-spacing: 0.02em;
     margin: 0;
     color: white;
@@ -44,11 +75,19 @@
 }
 
 .underline {
-    height: 1px;
-    width: 0;
-    margin: 14px auto 28px;
-    background: linear-gradient(90deg, transparent, #D59D21, transparent);
-    animation: draw 1.1s ease-out 0.2s forwards;
+    height: 2px;
+    width: 80%;
+    margin: 10px auto 20px;
+    background: linear-gradient(270deg, transparent, #D59D21, transparent);
+    animation: draw 1.5s ease-out 0.2s forwards;
+}
+
+.tagline {
+    text-align: center;
+    font-size: 16px;
+    color: lightslategray;
+    margin: -10px 0 28px;
+    letter-spacing: 0.02em;
 }
 
 form {
@@ -59,12 +98,94 @@ form {
 
 .field label{
     display: block;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: #D59D21;
     margin-bottom: 7px;
+}
+
+.field input{
+    border-radius: 8px;
+    padding: 11px 13px;
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    width: 100%;
+    border: 1px solid #00398e63;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 60px;
+}
+
+.field input::placeholder {
+    font-size: 16px;
+    color: rgb(114, 113, 113);
+}
+
+.showPasswordButton {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.submitButton {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    background: linear-gradient(180deg, #e6b243, #D59D21);
+    color: #17130A;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.registerDiv{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.registerDiv label{
+    text-align: center;
+    font-size: 14px;
+    color: lightslategray;
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+.registerLink {
+    text-align: center;
+    font-size: 16px;
+    color: #D59D21;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+}
+
+.registerLink:hover {
+    color: slateblue;
+    text-decoration: underline;
 }
 
 

@@ -14,3 +14,12 @@ body {
 @keyframes draw {
   to { width: 120px; }
 }
+
+@keyframes drift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-60px, 85px); }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
