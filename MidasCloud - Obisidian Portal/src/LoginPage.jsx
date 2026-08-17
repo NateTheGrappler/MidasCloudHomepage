@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './LoginPage.css';
+import { Link } from 'react-router-dom';
 
 function LoginPage()
 {
@@ -137,7 +138,7 @@ function LoginPage()
 
                 <div className = "registerDiv">
                     <label htmlFor="register">Want Access...?</label>
-                    <a href="https://portal.midascloud.net/register" className="registerLink"> Request to Register </a>
+                    <Link to="/register" className="registerLink" >Request to Register</Link>
                 </div>
 
 
