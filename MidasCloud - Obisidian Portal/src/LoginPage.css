@@ -50,7 +50,7 @@
     box-shadow: 0 60px 100px -20px #b67c0064;
 }
 
-.card a {
+.card a:not(.registerLink) {
     text-decoration: none;
     color: inherit;
 }
@@ -156,6 +156,18 @@ form {
     padding: 12px;
     cursor: pointer;
     transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.submitButton:hover
+{
+    background: linear-gradient(180deg, #cfa959, #fbc552);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.submitButton:active
+{
+    transform: scale(0.90);
 }
 
 .registerDiv{
