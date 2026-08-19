@@ -7,6 +7,8 @@ function RegisterPage()
     const [emailField, setEmailField] = useState('');
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    const [submitOccured, setSubmitOccured] = useState(false);
 
 
     //re-render stars differently for dynamic effect
@@ -22,6 +24,35 @@ function RegisterPage()
 
     //onclick button function to go back
     const navigate = useNavigate();
+
+
+    //handle register attempt
+    const handleRegister = (e) => 
+    {
+        e.preventDefault();
+        
+        //check filled fields
+        if(!emailField || !username)
+        {
+            setError('Please fill out both fields');
+            return;
+        }
+
+        //check for valid email
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(emailField)) 
+        {
+            setError('Please enter a valid email address');
+            return;
+        }
+
+        setError('');
+
+        //handle request for email here, and change display screen to show authenication request is sent to admin
+        setSubmitOccured(true);
+        //console.log(submitOccured);
+
+    }
 
     return (
         <div className = "RegisterPage">
@@ -50,7 +81,7 @@ function RegisterPage()
 
 
             {/*------------------Up top card decorations---------*/}
-            <div class = "RegisterCard">
+            <div className = "RegisterCard">
 
                 {/* Reuse the old code for good design practices */}
                 <div className="DecorationText">
@@ -67,11 +98,25 @@ function RegisterPage()
                 </div>
 
                 <div className="underline"></div>
-                <p className ="tagline">Please Register with Us</p>
+                {submitOccured ? (<p className ="tagline">Almost There!</p>) : (<p className ="tagline">Please Register with Us</p>) }
 
 
                 {/*------------------Actual User Input Area---------*/}
-                <form>
+                {submitOccured ? 
+                (
+                    <div className='pendingApproval'>
+                        <h2>Request Sent!</h2>
+                        <p>Thanks for signing up. Your request as been sent to an admin and is awaiting approval.
+                            In the meantime please check out our other services:
+                        </p>
+                        <a href="https://midascloud.net/" className="submitButton">
+                            Visit MidasCloud Homepage
+                        </a>
+
+                    </div> 
+                )    
+                : 
+                (<form onSubmit={handleRegister}>
                     {/*The email address field so you can contact the person*/}
                     <div className='field'>
                         <label htmlFor = "emailAddress">Email Address: </label>
@@ -113,9 +158,10 @@ function RegisterPage()
                     </div>
 
                     {/*------------Button For Submitting Request-----------*/}
+                    {error && <div className="errorMsg"><span>Please Try again: </span>{error}</div>}
                     <button type="submit" className = "submitButton"> Register</button>
 
-                </form>
+                </form> )}
             </div>
 
         </div>

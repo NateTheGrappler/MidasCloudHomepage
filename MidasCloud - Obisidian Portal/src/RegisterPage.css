@@ -124,3 +124,42 @@
     color: rgb(192, 192, 192);
     scrollbar-width: none;
 }
+
+
+/*--------------------------------------the page seen after submitting registration request --------------------------------------*/
+.pendingApproval {
+    animation: fadeTextIn 0.7s ease-out;
+    text-align: center;
+    column-gap: 3px;
+}
+
+.pendingApproval h2 {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'Fraunces', serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #D59D21;
+    margin-bottom: 7px;
+}
+
+.pendingApproval p {
+    display: block;
+    font-size: 18px;
+    font-family: 'Fraunces', serif;
+    letter-spacing: 0.04em;
+    color: gainsboro;
+    margin-bottom: 14px;
+}
+
+.pendingApproval a {
+    margin-top: 14px;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeTextIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}

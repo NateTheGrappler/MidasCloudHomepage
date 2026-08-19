@@ -156,6 +156,7 @@ form {
     padding: 12px;
     cursor: pointer;
     transition: filter 0.15s ease, transform 0.1s ease;
+    display: inline-block;
 }
 
 .submitButton:hover
@@ -199,6 +200,22 @@ form {
     color: slateblue;
     text-decoration: underline;
 }
+
+
+/*Error div and such stuff*/
+
+.errorMsg {
+    color: #ff8080;
+    background: #ff525215;
+    border: 1px solid #ff525240;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+
 
 
 

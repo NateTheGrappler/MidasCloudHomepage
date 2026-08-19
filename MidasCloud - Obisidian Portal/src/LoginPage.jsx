@@ -46,7 +46,42 @@ function LoginPage()
             return () => clearInterval(interval); //clean up so no memory leak occurs (screw you react)
         }, []); //[] because it's what react uses to only run this on start up apparently
 
+    
+    function checkPassword()
+    {
+        if (password.length < 8) return 'Password must be at least 8 characters';
+        if (password.length > 20) return 'Password must be less than 20 characters';
+        if (!/\d/.test(password)) return 'Password must include at least one number';
+        if (!/[!@#$%^&*(),.?":{}_|<>]/.test(password)) return 'Password must include at least one special character'; //some real JS fuckshit here ngl, the jumbled mess a character class
+        return null; //valid pswd
+    }
 
+    //handle the checking for when someone submits on login page
+    const handleSubmit = (e) =>
+    {
+        e.preventDefault();
+
+        //check both fields are filled out
+        if(!username || !password)
+        {
+            setError('Please make sure both fields are filled in');
+            return;
+        }
+
+        const passwordError = checkPassword();
+        if(passwordError)
+        {
+            setError(passwordError);
+            return;
+        }
+
+        //reset the error state
+        setError('');
+
+        //fetch call goes here when backend hooked up
+        console.log('ran passed all submit function checks')
+        return;
+    }
 
 
     //---------------------------------------------------------main html structure of the website---------------------------------------------------------
@@ -94,7 +129,7 @@ function LoginPage()
 
                 {/* ----------------------------------------------------------------------------------------- */}
                 {/* This is the thing holding both input fields, its a form with the embedded items for input*/}
-                <form>
+                <form onSubmit={handleSubmit}>
 
                     {/*The username part of log in*/}
                     <div className='field'>
@@ -132,7 +167,8 @@ function LoginPage()
                     </div>
 
 
-                    {/* ----------------------------------------------------------------------------------------- */}
+                    {/* --------------------------------------Button & Error Msg-------------------------------------------- */}
+                    {error && <div className="errorMsg"><span>Try again: </span>{error}</div>}
                     <button type="submit" className = "submitButton"> Submit</button>
                 </form>
 
