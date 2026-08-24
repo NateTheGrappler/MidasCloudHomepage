@@ -23,7 +23,7 @@ router.post('/login', (req, res) => {
     }
 
     //set up the session ID stuff here
-
+    req.session.userID = userObject.id;
 
     //see if user needs to change pwd
     if(userObject.hasDefaultPwd)
@@ -44,7 +44,9 @@ router.post('/register', (req, res) => {
     try 
     {
         users.insertRequestData(username, email, optionalRequest);
-        res.json({message: "Registration Successful", success: true});
+        res.status(200),json({message: "Registration Successful", success: true});
+
+        //set up some system that flags this request for the admin to approve as well as some rate limiting
     }
     catch (err)
     {
