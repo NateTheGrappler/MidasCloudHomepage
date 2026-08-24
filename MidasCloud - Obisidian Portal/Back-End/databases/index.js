@@ -14,9 +14,9 @@ database.exec(`
     hasDefaultPwd INTEGER CHECK (hasDefaultPwd IN (0, 1)),
     status TEXT NOT NULL DEFAULT 'pending',
     vaultLink TEXT,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    reasonForRequest TEXT
     )
     `);
-
 
 module.exports = database;
