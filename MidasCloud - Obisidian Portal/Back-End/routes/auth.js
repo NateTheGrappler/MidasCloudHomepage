@@ -63,7 +63,7 @@ router.post('/register', (req, res) => {
     }
 
     //send the user an email of their temp password
-    sendTempPasswordEmail(email, username, tempPassword).catch(error=>console.log(`failed to send email ${email}:`, err));
+    sendTempPasswordEmail(email, username, tempPassword).catch(error=>console.log(`failed to send email ${email}:`, error));
 });
 
 //-----------------------------New password stuff-----------------------------------//
