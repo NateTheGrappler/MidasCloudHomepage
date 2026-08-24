@@ -36,6 +36,8 @@ router.post('/login', (req, res) => {
 
 });
 
+//-----------------------------Registration stuff-----------------------------------//
+
 
 //register routing
 router.post('/register', (req, res) => {
@@ -44,7 +46,7 @@ router.post('/register', (req, res) => {
     try 
     {
         users.insertRequestData(username, email, optionalRequest);
-        res.status(200),json({message: "Registration Successful", success: true});
+        res.status(200).json({message: "Registration Successful", success: true});
 
         //set up some system that flags this request for the admin to approve as well as some rate limiting
     }
@@ -53,6 +55,56 @@ router.post('/register', (req, res) => {
         return res.status(409).json({message: "Username already exists", success: false});
     }
 
+});
+
+//-----------------------------New password stuff-----------------------------------//
+
+function checkPassword(password)
+{
+    if (password.length < 8) return 'Password must be at least 8 characters';
+    if (password.length > 20) return 'Password must be less than 20 characters';
+    if (!/\d/.test(password)) return 'Password must include at least one number';
+    if (!/[!@#$%^&*(),.?":{}_|<>]/.test(password)) return 'Password must include at least one special character'; //some real JS fuckshit here ngl, the jumbled mess a character class
+    return null; //valid pswd
+}
+
+//routing for when someone is prompted to change their password or wants to change it on their own (in the future maybe)
+router.post('/change-pwd', (req, res) => {
+
+    //check to see if user logged in to get to this page
+    if(!req.session.userID)
+    {
+        return res.status(401).json({message: "User not authenticated", success: false});
+    }
+
+    //get inputted data and user object from database
+    const {oldPwd, newPwd, confirmNewPwd} = req.body;
+    const userObject = users.getByID(req.session.userID);
+
+    //check old password is good
+    if(!userObject || !bcrypt.compareSync(oldPwd, userObject.password_hash))
+    {
+        return res.status(403).json({message: "Incorrect Old Password", success: false});
+    }
+
+    //check new password is typed correctly
+    if(newPwd !== confirmNewPwd)
+    {
+        return res.status(403).json({message: "New password differs from Confirm New Password", success: false});
+    }
+
+    //paste in the same password validation from the react front end
+    const validPwd = checkPassword(newPwd); 
+    if(validPwd)
+    {
+        return res.status(403).json({message: validPwd, success: false});
+    }
+
+    //otherwise actually change the password of the user
+    const newHash = bcrypt.hashSync(newPwd, 10);
+    users.setPassword(userObject.username, newHash, 0);
+
+    res.status(200).json({message: "Successfully changes user password", success: true});
 });
 
 
