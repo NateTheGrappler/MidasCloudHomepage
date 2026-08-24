@@ -1,7 +1,9 @@
 //handle both of the register routes, like the post for /login and /register
 const router = require('express').Router();
+const {sendTempPasswordEmail} = require(`../email`)
 const users = require('../databases/users')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto');
 
 
 //login routing
@@ -41,20 +43,27 @@ router.post('/login', (req, res) => {
 
 //register routing
 router.post('/register', (req, res) => {
+
     const {username, email, optionalRequest} = req.body;
+    const tempPassword = crypto.randomBytes(9).toString('base64'); //plaintext pwd
+    const tempHashPassword = bcrypt.hashSync(tempPassword, 10);
 
     try 
     {
-        users.insertRequestData(username, email, optionalRequest);
+        //insert user data and their temp pwd into db
+        users.insertRequestData(username, email, optionalRequest, tempHashPassword);
         res.status(200).json({message: "Registration Successful", success: true});
 
         //set up some system that flags this request for the admin to approve as well as some rate limiting
+
     }
     catch (err)
     {
         return res.status(409).json({message: "Username already exists", success: false});
     }
 
+    //send the user an email of their temp password
+    sendTempPasswordEmail(email, username, tempPassword).catch(error=>console.log(`failed to send email ${email}:`, err));
 });
 
 //-----------------------------New password stuff-----------------------------------//

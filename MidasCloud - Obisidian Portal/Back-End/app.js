@@ -1,9 +1,9 @@
 //create actual app
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const router = require('./routes/auth');
 const session = require('express-session')
-require('dotenv').config();
 
 //set up middleware
 app.use(express.json());
@@ -17,7 +17,7 @@ app.use(session({
     saveUninitialized: false,  //dont save new but not modified sessions
     rolling: true,             //reset time limit every interaction
     cookie: {                 //Cloudflare handles TLS so technically the program only handles HTTP
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 2 //two hours max time
     }

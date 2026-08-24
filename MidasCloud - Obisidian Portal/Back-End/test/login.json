@@ -1,4 +1,4 @@
 {
-    "username" : "A_TEST_USER",
-    "password" : "123"
+    "uname" : "A_TEST_USER",
+    "pwd" : "NewPass123!"
 }
