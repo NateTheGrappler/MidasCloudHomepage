@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css'
 import LoginPage from './LoginPage.jsx'
 import RegisterPage from './RegisterPage.jsx';
+import ChangePwdPage from './ChangePwd.jsx';
 
 function App() {
   
@@ -12,6 +13,7 @@ function App() {
     <Routes>
       <Route path="/" element={<LoginPage/>}/>
       <Route path="/register" element={<RegisterPage/>}/>
+      <Route path="/changePWD" element={<ChangePwdPage/>}/>
     </Routes>
   );
 }

@@ -17,7 +17,6 @@ function LoginPage()
         top: Math.random() * 100,
         left: Math.random() * 100,
         size: Math.random() * 4 + 1,
-        delay: Math.random() * 4,
     }))
     );
 
@@ -105,7 +104,6 @@ function LoginPage()
                             left: `${star.left}%`,
                             width: `${star.size}px`,
                             height: `${star.size}px`,
-                            animationDelay: `${star.delay}s`,
                         }}
                     />
                 ))}

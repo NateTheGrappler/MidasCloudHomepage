@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './RegisterPage.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function RegisterPage()
 {
@@ -18,7 +18,6 @@ function RegisterPage()
             top: Math.random() * 100,
             left: Math.random() * 100,
             size: Math.random() * 4 + 1,
-            delay: Math.random() * 4,
         }))
     );
 
@@ -73,7 +72,6 @@ function RegisterPage()
                             left: `${star.left}%`,
                             width: `${star.size}px`,
                             height: `${star.size}px`,
-                            animationDelay: `${star.delay}s`,
                         }}
                     />
                 ))}
@@ -106,12 +104,11 @@ function RegisterPage()
                 (
                     <div className='pendingApproval'>
                         <h2>Request Sent!</h2>
-                        <p>Thanks for signing up. Your request as been sent to an admin and is awaiting approval.
-                            In the meantime please check out our other services:
+                        <p>Thanks for signing up. An email has been sent to <a href={`mailto:${emailField}`} className="emailHighlight">{emailField}</a> with a temporary password.
                         </p>
-                        <a href="https://midascloud.net/" className="submitButton">
-                            Visit MidasCloud Homepage
-                        </a>
+                        <Link to="/" className="submitButton">
+                            Login
+                        </Link>
 
                     </div> 
                 )    

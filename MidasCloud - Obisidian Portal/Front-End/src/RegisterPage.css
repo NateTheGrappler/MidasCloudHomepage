@@ -96,7 +96,6 @@
     font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     color: #D59D21;
     margin-bottom: 1px;
 }
@@ -157,6 +156,10 @@
     margin-top: 14px;
     align-items: center;
     justify-content: center;
+}
+
+.emailHighlight {
+    color: #D59D21;
 }
 
 @keyframes fadeTextIn {
