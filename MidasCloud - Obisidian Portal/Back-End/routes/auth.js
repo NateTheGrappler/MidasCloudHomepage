@@ -12,25 +12,26 @@ router.post('/login', (req, res) => {
     const {uname, pwd} = req.body;
     const userObject = users.getByUsername(uname);
 
+
     //see if user exists and password is correct
     if(!userObject || !bcrypt.compareSync(pwd, userObject.password_hash))
     {
         return res.status(403).json({message: "Invalid Username or Password", success: false});
     }
 
-    //check to see if user is able to access information
-    if(userObject.status !== `approved`)
-    {
-        return res.status(403).json({message: "User not authorized for access", success: false});
-    }
-
-    //set up the session ID stuff here
+    //set up the session ID stuff here (BEFORE STATUS IS CHECKED bc u need it for when someone still needs to have their portal set up by admin/me)
     req.session.userID = userObject.id;
 
     //see if user needs to change pwd
     if(userObject.hasDefaultPwd)
     {
         return res.status(200).json({message: "User must change Password", success: true, mustChangePwd: true});
+    }
+
+    //check to see if user is able to access information
+    if(userObject.status !== `approved`)
+    {
+        return res.status(200).json({message: "Account pending approval", success: true, pending: true});
     }
 
     //theyre all good to login, send em their redirect
