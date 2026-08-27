@@ -12,6 +12,8 @@ router.post('/login', (req, res) => {
     const {uname, pwd} = req.body;
     const userObject = users.getByUsername(uname);
 
+    console.log(!bcrypt.compareSync(pwd, userObject.password_hash))
+    console.log(userObject)
 
     //see if user exists and password is correct
     if(!userObject || !bcrypt.compareSync(pwd, userObject.password_hash))
