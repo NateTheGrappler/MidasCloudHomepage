@@ -49,7 +49,9 @@ function RegisterPage()
 
         //handle request for email here, and change display screen to show authenication request is sent to admin
         setSubmitOccured(true);
+
         //console.log(submitOccured);
+        //Hook up the backend fetch call here when that comes
 
     }
 

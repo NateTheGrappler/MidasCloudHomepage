@@ -10,7 +10,73 @@ function ChangePwdPage()
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setnewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
-    const [error, setError] = useState('');
+    const [matchError, setMatchError] = useState('');
+    const [submitError, setSubmitError] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmNewPassword, setConfirmShowNewPassword] = useState(false);
+
+    useEffect(()=>{
+        if(confirmNewPassword.length === 0)
+        {
+            //dont just pop up whenever its empty
+            setMatchError('');
+        }
+        else if (newPassword !== confirmNewPassword)
+        {
+            //actual error msg
+            setMatchError('Passwords do not match.');
+        }
+        else
+        {
+            //reset the old gal
+            setMatchError('');
+        }
+    }, [newPassword, confirmNewPassword]); //only run this whenever the state of those two variables changes
+
+
+    //password checking for valid submit options moved here from login because it feels more appropriate here
+    function checkPassword()
+    {
+        if (newPassword.length < 8) return 'New password must be at least 8 characters';
+        if (newPassword.length > 20) return 'New password must be less than 20 characters';
+        if (!/\d/.test(newPassword)) return 'New password must include at least one number';
+        if (!/[!@#$%^&*(),.?":{}_|<>]/.test(newPassword)) return 'New password must include at least one special character'; //some real JS fuckshit here ngl, the jumbled mess a character class
+        return null; //valid pswd
+    }
+    const handleSubmit = (e) =>
+    {
+        e.preventDefault();
+
+        //check all fields are filled out
+        if(!oldPassword || !newPassword || !confirmNewPassword)
+        {
+            setSubmitError('Please make sure all fields are filled in');
+            return;
+        }
+
+        const passwordError = checkPassword();
+        if(passwordError)
+        {
+            setSubmitError(passwordError);
+            return;
+        }
+
+        if(newPassword !== confirmNewPassword)
+        {
+            setSubmitError('Passwords do not match');
+            return;
+        }
+
+        //reset the error state
+        setSubmitError('');
+
+        //fetch call goes here when backend hooked up
+        console.log('ran passed all submit function checks')
+        return;
+    }
+
 
     const [stars] = useState(() =>
         Array.from({length: 250}, (_, i) => ({
@@ -61,47 +127,62 @@ function ChangePwdPage()
 
 
             {/*--------------Input Fields----------------*/}
-            <form>
+            <form onSubmit={handleSubmit}>
                 {/*The Current Password Field*/}
                 <div className='changePwdField'>
                     <label>Old Password:</label>
                     <input
-                    type= "text"
-                    id = "username"
+                    type= {showPassword ? 'text' : 'password'}
+                    id = "oldPassword"
                     value = {oldPassword}
                     placeholder='**********'
                     onChange={(e) => setOldPassword(e.target.value)}
                     >
                     </input>
+
+                    {/*Password visibilty button*/}
+                    <button type="button" onClick={ () => setShowPassword(!showPassword)}>
+                        {showPassword ? 'Hide' : 'Show'}
+                    </button>
                 </div>
 
                 {/*The New Password Field*/}
                 <div className='changePwdField'>
                     <label>New Password:</label>
                     <input
-                    type= "text"
-                    id = "username"
+                    type= {showNewPassword ? 'text' : 'password'}
+                    id = "newPassword"
                     value = {newPassword}
                     placeholder='**********'
                     onChange={(e) => setnewPassword(e.target.value)}
                     >
                     </input>
+
+                    {/*Password visibilty button*/}
+                    <button type="button" onClick={ () => setShowNewPassword(!showNewPassword)}>
+                        {showNewPassword ? 'Hide' : 'Show'}
+                    </button>
                 </div>
 
                 {/*The Confirm New Password Field*/}
                 <div className='changePwdField'>
                     <label>Confirm Password:</label>
                     <input
-                    type= "text"
-                    id = "username"
+                    type= {showConfirmNewPassword ? 'text' : 'password'}
+                    id = "confirmNewPassword"
                     value = {confirmNewPassword}
                     placeholder='**********'
                     onChange={(e) => setConfirmNewPassword(e.target.value)}
                     >
                     </input>
-                </div>
 
-                    {error && <div className="errorMsg"><span>Try again: </span>{error}</div>}
+                    <button type="button" onClick={ () => setConfirmShowNewPassword(!showConfirmNewPassword)}>
+                        {showConfirmNewPassword ? 'Hide' : 'Show'}
+                    </button>
+
+                </div>
+                    {matchError && <div className="errorMsg"><span>Try again: </span>{matchError}</div>}
+                    {submitError && <div className="errorMsg"><span>Try again: </span>{submitError}</div>}
                     <button type="submit" className = "submitButton"> Change My Password</button>
 
             </form>
