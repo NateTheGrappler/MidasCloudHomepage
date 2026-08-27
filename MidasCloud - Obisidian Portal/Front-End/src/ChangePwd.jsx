@@ -7,9 +7,10 @@ import { useNavigate } from 'react-router-dom';
 function ChangePwdPage()
 {
     //set the state for the passwords so you can send them to backend
-    const {oldPassword, setOldPassword} = useState('');
-    const {newPassword, setnewPassword} = useState('');
-    const {confirmNewPassword, setConfirmNewPassword} = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setnewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [error, setError] = useState('');
 
     const [stars] = useState(() =>
         Array.from({length: 250}, (_, i) => ({
@@ -63,7 +64,7 @@ function ChangePwdPage()
             <form>
                 {/*The Current Password Field*/}
                 <div className='changePwdField'>
-                    <label>Old Password</label>
+                    <label>Old Password:</label>
                     <input
                     type= "text"
                     id = "username"
@@ -76,7 +77,7 @@ function ChangePwdPage()
 
                 {/*The New Password Field*/}
                 <div className='changePwdField'>
-                    <label>New Password</label>
+                    <label>New Password:</label>
                     <input
                     type= "text"
                     id = "username"
@@ -89,7 +90,7 @@ function ChangePwdPage()
 
                 {/*The Confirm New Password Field*/}
                 <div className='changePwdField'>
-                    <label>Confirm Password</label>
+                    <label>Confirm Password:</label>
                     <input
                     type= "text"
                     id = "username"
@@ -99,6 +100,9 @@ function ChangePwdPage()
                     >
                     </input>
                 </div>
+
+                    {error && <div className="errorMsg"><span>Try again: </span>{error}</div>}
+                    <button type="submit" className = "submitButton"> Change My Password</button>
 
             </form>
 

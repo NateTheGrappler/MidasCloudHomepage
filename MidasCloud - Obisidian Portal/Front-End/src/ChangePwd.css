@@ -8,3 +8,21 @@
     overflow: hidden;
     padding: 24px;
 }
+
+.changePwdField label{
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #D59D21;
+    margin-bottom: 7px;
+}
+
+.changePwdField input{
+    border-radius: 8px;
+    padding: 8px 13px;
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    width: 100%;
+    border: 1px solid #00398e63;
+}
