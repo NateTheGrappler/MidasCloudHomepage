@@ -47,7 +47,7 @@ function LoginPage()
 
 
     //handle the checking for when someone submits on login page
-    const handleSubmit = (e) =>
+    const handleSubmit = async (e) =>
     {
         e.preventDefault();
 
@@ -61,8 +61,30 @@ function LoginPage()
         //reset the error state
         setError('');
 
-        //fetch call goes here when backend hooked up
-        console.log('ran passed all submit function checks')
+        //just use local host now for testing
+        //TODO: change to real url when deployed
+        const response = await fetch('http://localhost:3000/api/change-pwd', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                uname: username,
+                pwd: password
+            })
+        })
+
+        //convert response data
+        const data = await response.json();
+
+        //check data is there
+        if(!data.success)
+        {
+            setError(data.message);
+            return
+        }
+        
+        //actually parse data (print now for testing)
+        console.log(data.message);
+
         return;
     }
 
