@@ -53,9 +53,17 @@ function LoginPage()
         console.log(data.message);
 
         //check to see if user needs to update pwd, if so, redirect
-        if(data.success && data.mustChangePwd)
+        if(data.mustChangePwd)
         {
             navigate("/changePWD");
+        }
+        else if (data.pending)
+        {
+            setError('Your account is still pending approval with an admin. Please check back later! Thank You!');
+        }
+        else if (data.vaultLink)
+        {
+            //actually navigate someone to their site eventually
         }
     };
 
@@ -81,6 +89,7 @@ function LoginPage()
             const response = await fetch('http://localhost:3000/api/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
+                credentials: 'include',
                 body: JSON.stringify({
                     uname: username,
                     pwd: password
@@ -97,7 +106,7 @@ function LoginPage()
                 return
             }
 
-            //handle data after you know you have it
+            //handle data after you know you have it (mostly happens in backend, so just update UI)
             parseResponse(data);
         }
         catch (err)

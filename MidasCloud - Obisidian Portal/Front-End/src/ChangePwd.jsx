@@ -1,6 +1,6 @@
 import {useState, useEffect } from 'react';
 import './ChangePwd.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 
@@ -16,6 +16,9 @@ function ChangePwdPage()
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmNewPassword, setConfirmShowNewPassword] = useState(false);
+
+    const [submitOccured, setSubmitOccured] = useState(false);
+
 
     useEffect(()=>{
         if(confirmNewPassword.length === 0)
@@ -45,7 +48,7 @@ function ChangePwdPage()
         if (!/[!@#$%^&*(),.?":{}_|<>]/.test(newPassword)) return 'New password must include at least one special character'; //some real JS fuckshit here ngl, the jumbled mess a character class
         return null; //valid pswd
     }
-    const handleSubmit = (e) =>
+    const handleSubmit = async (e) =>
     {
         e.preventDefault();
 
@@ -74,6 +77,39 @@ function ChangePwdPage()
 
         //fetch call goes here when backend hooked up
         console.log('ran passed all submit function checks')
+
+        try
+        {
+            const response = await fetch('http://localhost:3000/api/change-pwd', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'include', //this makes sure the cookies from the login session where saved, might need to change if I ever add a `forgot password thing`
+                body: JSON.stringify({
+                    oldPwd: oldPassword,
+                    newPwd: newPassword,
+                    confirmNewPwd: confirmNewPassword
+                })
+            })
+            const data = await response.json();
+
+            //handle if the request was successful in the backend or not
+            if(!data.success)
+            {
+                setSubmitError(data.message);
+                return
+            }
+
+            //update the UI to let the user know that their vault creation is in fact processing
+            setSubmitOccured(true);
+
+        }
+        catch (err)
+        {
+            setSubmitError('Something went wrong in communicating with server, Please try again');
+            console.error("Change Password Failed:", err);
+            setSubmitOccured(true);
+        }
+
         return;
     }
 
@@ -127,7 +163,20 @@ function ChangePwdPage()
 
 
             {/*--------------Input Fields----------------*/}
-            <form onSubmit={handleSubmit}>
+            {submitOccured ? 
+            (
+                <div className='pendingApproval'>
+                    <h2>Password Changed!</h2>
+                    <p>Thank you for changing your password. If this is your first time creating an account, you must wait until an admin creates
+                        an obsidian vault for you. You will be notified when this occurs, and then access your vault with your new password
+                    </p>
+                    <Link to="https://midascloud.net" className="submitButton">
+                        Return To MidasCloud Homepage
+                    </Link>
+                </div> 
+            ) 
+            : 
+            ( <form onSubmit={handleSubmit}>
                 {/*The Current Password Field*/}
                 <div className='changePwdField'>
                     <label>Old Password:</label>
@@ -185,8 +234,7 @@ function ChangePwdPage()
                     {submitError && <div className="errorMsg"><span>Try again: </span>{submitError}</div>}
                     <button type="submit" className = "submitButton"> Change My Password</button>
 
-            </form>
-
+            </form> )}
 
             </div>
         </div>

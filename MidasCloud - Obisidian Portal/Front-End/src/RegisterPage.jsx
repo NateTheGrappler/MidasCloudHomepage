@@ -90,7 +90,7 @@ function RegisterPage()
         catch (err)
         {
             setError('Something went wrong in communicating with server, Please try again');
-            console.error("Log in request failed:", err)
+            console.error("Register Request Failed:", err)
             setSubmitOccured(false);
 
         }
