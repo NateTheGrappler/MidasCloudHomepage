@@ -25,8 +25,17 @@ function RegisterPage()
     const navigate = useNavigate();
 
 
+    //-------------------------------Handle Register attempts and back-end communication--------------------------------//
+
+    const parseResponse = (data) =>
+    {
+        //log message just for now
+        console.log(data.message);
+
+    }
+
     //handle register attempt
-    const handleRegister = (e) => 
+    const handleRegister = async (e) => 
     {
         e.preventDefault();
         
@@ -47,11 +56,45 @@ function RegisterPage()
 
         setError('');
 
-        //handle request for email here, and change display screen to show authenication request is sent to admin
-        setSubmitOccured(true);
-
         //console.log(submitOccured);
         //Hook up the backend fetch call here when that comes
+        try
+        {
+            //get data and parse it
+            const response = await fetch("http://localhost:3000/api/register", {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username: username,
+                    email: emailField,
+                    optionalRequest: message
+                })
+
+            });
+            const data = await response.json();
+
+            //handle if the request was successful in the backend or not
+            if(!data.success)
+            {
+                setError(data.message);
+                return
+            }
+
+            //actually do something with the data
+            parseResponse(data);
+
+            //change display screen to show authenication request is sent to admin
+            setSubmitOccured(true);
+
+        }
+        catch (err)
+        {
+            setError('Something went wrong in communicating with server, Please try again');
+            console.error("Log in request failed:", err)
+            setSubmitOccured(false);
+
+        }
+
 
     }
 

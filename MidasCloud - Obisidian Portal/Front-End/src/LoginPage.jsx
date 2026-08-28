@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './LoginPage.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function LoginPage()
 {
@@ -9,6 +9,7 @@ function LoginPage()
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     //star array for background star constellation
     const [stars] = useState(() =>
@@ -46,6 +47,18 @@ function LoginPage()
         }, []); //[] because it's what react uses to only run this on start up apparently
 
 
+    const parseResponse = (data) => {
+
+        //log message to see we got through for now
+        console.log(data.message);
+
+        //check to see if user needs to update pwd, if so, redirect
+        if(data.success && data.mustChangePwd)
+        {
+            navigate("/changePWD");
+        }
+    };
+
     //handle the checking for when someone submits on login page
     const handleSubmit = async (e) =>
     {
@@ -63,27 +76,35 @@ function LoginPage()
 
         //just use local host now for testing
         //TODO: change to real url when deployed
-        const response = await fetch('http://localhost:3000/api/change-pwd', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                uname: username,
-                pwd: password
-            })
-        })
-
-        //convert response data
-        const data = await response.json();
-
-        //check data is there
-        if(!data.success)
+        try
         {
-            setError(data.message);
-            return
+            const response = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    uname: username,
+                    pwd: password
+                })
+            })
+
+            //convert response data
+            const data = await response.json();
+
+            //check data is there
+            if(!data.success)
+            {
+                setError(data.message);
+                return
+            }
+
+            //handle data after you know you have it
+            parseResponse(data);
         }
-        
-        //actually parse data (print now for testing)
-        console.log(data.message);
+        catch (err)
+        {
+            setError('Something went wrong in communicating with server, Please try again');
+            console.error("Log in request failed:", err)
+        }
 
         return;
     }
