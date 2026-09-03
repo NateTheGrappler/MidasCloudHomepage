@@ -64,6 +64,7 @@ function LoginPage()
         else if (data.vaultLink)
         {
             //actually navigate someone to their site eventually
+            window.location.href = data.vaultLink;
         }
     };
 
