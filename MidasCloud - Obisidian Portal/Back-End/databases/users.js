@@ -10,6 +10,12 @@ const users =
         return database.prepare(`SELECT * FROM users WHERE username = ?`).get(username);
     },
 
+    //get the user by an email so you can check for duplicates
+    getByEmail(email)
+    {
+        return database.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
+    },
+
 
     //this would get called whenever a user makes a request to join the service
     insertRequestData(username, email, optionalRequest, tempPassword)
@@ -24,6 +30,18 @@ const users =
     updateStatus(username, status)
     {
         return database.prepare(`UPDATE users SET status = ? WHERE username = ?`).run(status, username);
+    },
+
+    //change the vault link to whatever their actual link is after their container is running
+    updateVaultLink(username, vaultLink)
+    {
+        return database.prepare(`UPDATE users SET vaultLink = ? WHERE username = ?`).run(vaultLink, username)
+    },
+
+    //returns all pending users in database
+    getAllPending()
+    {
+        return database.prepare(`SELECT * FROM users WHERE status='pending'`).all();
     },
 
 
