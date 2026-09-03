@@ -80,7 +80,7 @@ function ChangePwdPage()
 
         try
         {
-            const response = await fetch('http://localhost:3000/api/change-pwd', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/change-pwd`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 credentials: 'include', //this makes sure the cookies from the login session where saved, might need to change if I ever add a `forgot password thing`

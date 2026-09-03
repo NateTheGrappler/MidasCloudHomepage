@@ -11,7 +11,7 @@ app.use(express.json());
 
 //you need to have cors for cookie usage or something like, otherwise terminal errors
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_ORIGIN,
     credentials: true
 }));
 
