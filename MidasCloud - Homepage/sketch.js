@@ -44,9 +44,9 @@ const panelRingSettings = {
 };
 
 let informationPanelData = [
-  { title: 'Obsidian Vault(s)', detail: "Stores your notes", image: 'images/ObsidianLogo.png', link: null},
+  { title: 'Obsidian Vault(s)', detail: "Stores your notes", image: 'images/ObsidianLogo.png', link: 'https://portal.midascloud.net'},
   { title: 'Nextcloud', detail: "Stores your files", image: 'images/nextCloud.png', link: 'https://files.midascloud.net'},
-  { title: 'Jellyfin Server', detail: "Streams your media (For Friends and Family Only)", image: 'images/jellyfin.webp', link: 'https://jelly.midascloud.net' },
+  { title: 'Jellyfin Server', detail: "Streams your media (For Friends and Family Only)", image: 'images/jellyfin.webp', link: 'https://wy3d.midascloud.net' },
   { title: 'Study Material Site (Coming Later)', detail: "Share study materials to organize them", image: 'images/bookstack.png', link: null },
   { title: 'Minecraft Server (Coming Later)', detail: "A minecraft server IP to join", image: 'images/Minecraft_logo.svg', link: null },
   { title: 'Check Out More Of My Stuff!', detail: "A link to github and other projects", image: 'images/github.jpeg', link: 'https://github.com/NateTheGrappler?tab=repositories' },
